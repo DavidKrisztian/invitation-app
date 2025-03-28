@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
-import { Box, Button, Typography, Paper } from '@mui/material';
+import { Box, Button, Typography, Paper, Chip } from '@mui/material';
 
 const QRScanner = () => {
   const [scanResult, setScanResult] = useState(null);
+  const [isValid, setIsValid] = useState(null); // Nouă stare pentru validitatea codului QR
   const webcamRef = useRef(null);
   const [videoConstraints, setVideoConstraints] = useState({
     facingMode: "environment" // Camera din spate
@@ -34,6 +35,11 @@ const QRScanner = () => {
 
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
+    if (!imageSrc) {
+      console.error("Nu s-a putut captura imaginea de la webcam");
+      return;
+    }
+    
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const img = new Image();
@@ -48,11 +54,63 @@ const QRScanner = () => {
       const code = jsQR(imageData.data, imageData.width, imageData.height);
 
       if (code) {
-        setScanResult(JSON.parse(code.data));
+        try {
+          // Încercăm să parsam datele JSON, în caz că sunt în format corect
+          const parsedData = JSON.parse(code.data);
+          setScanResult(parsedData); // Setează datele din QR
+          setIsValid(true); // Codul QR este valid
+        } catch (error) {
+          setScanResult('Cod QR invalid!');
+          setIsValid(false); // Codul QR nu este valid
+        }
       } else {
         setScanResult('Cod QR invalid!');
+        setIsValid(false); // Codul QR nu este valid
       }
     };
+  };
+
+  const renderScanResult = () => {
+    // Verificăm dacă scanResult conține date valide
+    if (!scanResult) {
+      return null; // Dacă nu există niciun rezultat, nu afișăm nimic
+    }
+
+    if (typeof scanResult === 'string') {
+      // Mesaj de eroare pentru QR invalid
+      return (
+        <Typography variant="body1" color="error" sx={{ marginTop: 2 }}>
+          {scanResult}
+        </Typography>
+      );
+    }
+
+    // Dacă scanResult este un obiect, afișăm rezultatele frumos
+    return (
+      <Box sx={{ marginTop: 2 }}>
+        <Typography variant="h6" color="primary">Rezultatele Scanării:</Typography>
+        {scanResult.name && (
+          <Typography variant="body1">
+            <strong>Name:</strong> {scanResult.name}
+          </Typography>
+        )}
+        {scanResult.email && (
+          <Typography variant="body1">
+            <strong>Email:</strong> {scanResult.email}
+          </Typography>
+        )}
+        {scanResult.phone && (
+          <Typography variant="body1">
+            <strong>Phone:</strong> {scanResult.phone}
+          </Typography>
+        )}
+        {scanResult.instagram && (
+          <Typography variant="body1">
+            <strong>Instagram:</strong> {scanResult.instagram}
+          </Typography>
+        )}
+      </Box>
+    );
   };
 
   return (
@@ -99,16 +157,16 @@ const QRScanner = () => {
         >
           Scanează
         </Button>
-        {scanResult && (
-          <Paper sx={{ padding: 2, textAlign: 'center', backgroundColor: '#fff', boxShadow: 2 }}>
-            <Typography variant="h6" color="primary">
-              Rezultatul Scanării:
-            </Typography>
-            <Typography variant="body1" sx={{ marginTop: 1 }}>
-              {typeof scanResult === 'string' ? scanResult : JSON.stringify(scanResult, null, 2)}
-            </Typography>
-          </Paper>
+
+        {isValid !== null && (
+          <Chip
+            label={isValid ? 'Verified' : 'Invalid QR Code'}
+            color={isValid ? 'success' : 'error'}
+            sx={{ marginBottom: 2 }}
+          />
         )}
+
+        {renderScanResult()}
       </Box>
     </Box>
   );

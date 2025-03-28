@@ -37,7 +37,7 @@ const Form = () => {
   };
 
   return (
-    <Paper sx={{ padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400, margin: '10%' }}>
+    <Paper sx={{  padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400, margin: 'auto', marginTop:'5%' }}>
       <Typography variant="h4" align="center" color="primary">
         Funktastika Invite
       </Typography>
