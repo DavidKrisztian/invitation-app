@@ -1,11 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
-import { Button, Typography, Paper } from '@mui/material';
 
 const QRScanner = () => {
   const [scanResult, setScanResult] = useState(null);
-  const webcamRef = React.useRef(null);
+  const webcamRef = useRef(null);
+  const [videoConstraints, setVideoConstraints] = useState({
+    facingMode: "environment" // Acesta va selecta camera din spate
+  });
+
+  useEffect(() => {
+    // Verifică dispozitivele video disponibile și setează camera corectă
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const backCamera = videoDevices.find(device => device.facing === 'environment'); // Camera din spate
+
+        if (backCamera) {
+          // Setăm camera din spate, dacă este disponibilă
+          setVideoConstraints({
+            deviceId: backCamera.deviceId
+          });
+        } else {
+          // Dacă nu găsim camera din spate, folosim valoarea implicită (care este "environment")
+          setVideoConstraints({
+            facingMode: 'environment'
+          });
+        }
+      })
+      .catch(err => console.error("Eroare la obținerea dispozitivelor video: ", err));
+  }, []);
 
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -18,7 +42,7 @@ const QRScanner = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       context.drawImage(img, 0, 0, img.width, img.height);
-      
+
       const imageData = context.getImageData(0, 0, img.width, img.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
 
@@ -31,16 +55,16 @@ const QRScanner = () => {
   };
 
   return (
-    <Paper sx={{ padding: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Typography variant="h4" align="center" color="primary" gutterBottom>
-        Scanează Invitația
-      </Typography>
-      <Webcam ref={webcamRef} screenshotFormat="image/png" width="100%" />
-      <Button variant="contained" color="primary" onClick={capture} sx={{ marginTop: 2 }}>
-        Scanează
-      </Button>
-      {scanResult && <Typography variant="body1" color="textSecondary" sx={{ marginTop: 2 }}>Rezultat: {JSON.stringify(scanResult)}</Typography>}
-    </Paper>
+    <div>
+      <h2>Scanează Invitația</h2>
+      <Webcam
+        ref={webcamRef}
+        screenshotFormat="image/png"
+        videoConstraints={videoConstraints} // Setăm constrângerile pentru video
+      />
+      <button onClick={capture}>Scanează</button>
+      {scanResult && <p>Rezultat: {JSON.stringify(scanResult)}</p>}
+    </div>
   );
 };
 
