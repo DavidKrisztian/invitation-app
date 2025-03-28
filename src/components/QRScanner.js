@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
+import { Box, Button, Typography, Paper } from '@mui/material';
 
 const QRScanner = () => {
   const [scanResult, setScanResult] = useState(null);
   const webcamRef = useRef(null);
   const [videoConstraints, setVideoConstraints] = useState({
-    facingMode: "environment" // Acesta va selecta camera din spate
+    facingMode: "environment" // Camera din spate
   });
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const QRScanner = () => {
             deviceId: backCamera.deviceId
           });
         } else {
-          // Dacă nu găsim camera din spate, folosim valoarea implicită (care este "environment")
+          // Dacă nu găsim camera din spate, folosim valoarea implicită
           setVideoConstraints({
             facingMode: 'environment'
           });
@@ -55,16 +56,61 @@ const QRScanner = () => {
   };
 
   return (
-    <div>
-      <h2>Scanează Invitația</h2>
-      <Webcam
-        ref={webcamRef}
-        screenshotFormat="image/png"
-        videoConstraints={videoConstraints} // Setăm constrângerile pentru video
-      />
-      <button onClick={capture}>Scanează</button>
-      {scanResult && <p>Rezultat: {JSON.stringify(scanResult)}</p>}
-    </div>
+    <Box 
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5'
+      }}
+    >
+      <Box
+        sx={{
+          position: 'relative',
+          width: '100%',
+          height: '50vh',
+          maxWidth: '600px',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: 3,
+        }}
+      >
+        <Webcam
+          ref={webcamRef}
+          screenshotFormat="image/png"
+          videoConstraints={videoConstraints}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </Box>
+
+      <Box sx={{ padding: 2, width: '100%', maxWidth: '600px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={capture}
+          fullWidth
+          sx={{ marginBottom: 2 }}
+        >
+          Scanează
+        </Button>
+        {scanResult && (
+          <Paper sx={{ padding: 2, textAlign: 'center', backgroundColor: '#fff', boxShadow: 2 }}>
+            <Typography variant="h6" color="primary">
+              Rezultatul Scanării:
+            </Typography>
+            <Typography variant="body1" sx={{ marginTop: 1 }}>
+              {typeof scanResult === 'string' ? scanResult : JSON.stringify(scanResult, null, 2)}
+            </Typography>
+          </Paper>
+        )}
+      </Box>
+    </Box>
   );
 };
 
