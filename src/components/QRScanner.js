@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import jsQR from 'jsqr';
-import { Box, Button, Typography, Paper, Chip } from '@mui/material';
+import { Box, Button, Typography, Chip } from '@mui/material';
 
 const QRScanner = () => {
   const [scanResult, setScanResult] = useState(null);

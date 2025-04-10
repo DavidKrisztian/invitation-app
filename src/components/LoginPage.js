@@ -1,9 +1,8 @@
-// LoginPage.js
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Paper } from '@mui/material';
+import { TextField, Button, Typography, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ login }) => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const LoginPage = () => {
   const handleLogin = () => {
     // Verificăm dacă datele de autentificare sunt corecte (aici e doar un exemplu simplu)
     if (credentials.username === 'admin' && credentials.password === 'admin') {
+      login(); // Setăm utilizatorul ca autentificat
       navigate('/dashboard'); // Redirecționăm către dashboard
     } else {
       setError('Date de autentificare incorecte!');
@@ -22,7 +22,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Paper sx={{  padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400, margin: 'auto', marginTop:'5%' }}>
+    <Paper sx={{ padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400, margin: 'auto', marginTop:'5%' }}>
       <Typography variant="h4" align="center" color="primary">
         Autentificare
       </Typography>

@@ -1,64 +1,73 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import DashboardPage from './components/DashboardPage';
 import Form from './components/Form';
 import QRScanner from './components/QRScanner';
-import { ThemeProvider, createTheme, Box, Typography } from '@mui/material';
-import { CssBaseline } from '@mui/material';
+import { ThemeProvider, createTheme, Box, CssBaseline } from '@mui/material';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 // Definirea temei
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ef0001', // Culoare principală albastră
+      main: '#ef0001', // Culoare principală
     },
     secondary: {
-      main: '#650c0c', // Culoare secundară roz
+      main: '#650c0c', // Culoare secundară
     },
   },
 });
 
-// Componenta Header
-const Header = () => (
-  <Box sx={{ backgroundColor: '#0c0c0c', padding: '10px 0', textAlign: 'center' }}>
-    <Typography variant="h4" sx={{ color: '#ef0001' }}>
-      Funktastika Invite App
-    </Typography>
-  </Box>
-);
-
-// Componenta Footer
-const Footer = () => (
-  <Box sx={{ backgroundColor: '#f1f1f1', padding: '10px 0', position: 'relative', bottom: 0, width: '100%' }}>
-    <Typography variant="body2" sx={{ textAlign: 'center', color: '#555' }}>
-  Powered by{' '}
-  <a href="https://bro-web.ro" target="_blank" rel="noopener" style={{ color: '#007bff', textDecoration: 'none' }}>
-    Bro Web
-  </a>
-</Typography>
-  </Box>
-);
-
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Verificăm JWT la încărcarea aplicației
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // Funcție de login care salvează JWT în localStorage
+  const login = () => {
+    // Într-o aplicație reală, aici vei obține JWT de la un server
+    localStorage.setItem('jwt', 'mock-jwt-token'); // Simulăm JWT
+    setIsAuthenticated(true);
+  };
+
+  // Funcție de logout care elimină JWT din localStorage
+  const logout = () => {
+    localStorage.removeItem('jwt');
+    setIsAuthenticated(false);
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline /> {/* Resetarea stilurilor pentru o experiență unificată */}
+      <CssBaseline />
       <Router>
-        {/* Adăugăm Header-ul */}
-        <Header />
-
-        {/* Contenutul principal */}
+        <Header logout={logout} isAuthenticated={isAuthenticated} />
+        
         <Box sx={{ minHeight: '100vh', paddingBottom: '50px' }}>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/generate-invitation" element={<Form />} />
-            <Route path="/scan" element={<QRScanner />} />
+            <Route path="/" element={<LoginPage login={login} />} />
+            <Route 
+              path="/dashboard" 
+              element={isAuthenticated ? <DashboardPage /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/generate-invitation" 
+              element={isAuthenticated ? <Form /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/scan" 
+              element={isAuthenticated ? <QRScanner /> : <Navigate to="/" />} 
+            />
           </Routes>
         </Box>
 
-        {/* Adăugăm Footer-ul */}
         <Footer />
       </Router>
     </ThemeProvider>
