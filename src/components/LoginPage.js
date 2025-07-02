@@ -13,7 +13,7 @@ const LoginPage = ({ login }) => {
 
   const handleLogin = () => {
     // Verificăm dacă datele de autentificare sunt corecte (aici e doar un exemplu simplu)
-    if (credentials.username === 'admin' && credentials.password === 'admin') {
+    if (credentials.username === 'Funktastika' && credentials.password === 'invite_2025') {
       login(); // Setăm utilizatorul ca autentificat
       navigate('/dashboard'); // Redirecționăm către dashboard
     } else {
