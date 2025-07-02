@@ -52,7 +52,15 @@ function App() {
         
         <Box sx={{ minHeight: '100vh', paddingBottom: '50px' }}>
           <Routes>
-            <Route path="/" element={<LoginPage login={login} />} />
+            <Route 
+  path="/" 
+  element={
+    isAuthenticated 
+      ? <Navigate to="/dashboard" replace /> 
+      : <LoginPage login={login} />
+  } 
+/>
+
             <Route 
               path="/dashboard" 
               element={isAuthenticated ? <DashboardPage /> : <Navigate to="/" />} 

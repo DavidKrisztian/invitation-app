@@ -55,14 +55,14 @@ const Form = () => {
 
     background.onload = async () => {
       doc.addImage(background, 'JPEG', 0, 0, 500, 700);
-      doc.setFontSize(40);
+      doc.setFontSize(45);
       doc.setTextColor(255, 255, 255);
-      doc.text(participant.name, 250, 130, { align: 'center' });
+      doc.text(participant.name, 250, 175, { align: 'center' });
 
       try {
         const qrData = JSON.stringify(participant);
         const qrDataUrl = await QRCode.toDataURL(qrData);
-        doc.addImage(qrDataUrl, 'PNG', 50, 500, 120, 120);
+        doc.addImage(qrDataUrl, 'PNG', 210, 585, 100, 100);
       } catch (err) {
         console.error('QR code generation error:', err);
         setError('Eroare la generarea codului QR.');
