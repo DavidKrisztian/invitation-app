@@ -77,15 +77,21 @@ const Form = () => {
     };
   };
 
-  const sendEmail = (email) => {
+const sendEmail = (email) => {
   if (!generatedPDF) {
     setError('Nu ai generat încă invitația!');
     return;
   }
 
-  const mailtoLink = `mailto:${email}`;
+  const subject = encodeURIComponent('Invitatie Funktastika');
+  const body = encodeURIComponent(
+    `HERE’S YOUR INVITATION!\n🎉 FUNKSTASTIKA Summer Call Party 🎉\n📍 Medusa\n📅 12 July | 🕖 Starts at 19:00\n📞 Book your table: 0731330678\nGet ready to FUNK with us!`
+  );
+
+  const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
   window.location.href = mailtoLink;
 };
+
 
   const toggleMode = () => {
     setIsCSVMode(!isCSVMode);
