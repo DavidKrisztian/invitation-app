@@ -78,15 +78,14 @@ const Form = () => {
   };
 
   const sendEmail = (email) => {
-    if (!generatedPDF) {
-      setError('Nu ai generat încă invitația!');
-      return;
-    }
+  if (!generatedPDF) {
+    setError('Nu ai generat încă invitația!');
+    return;
+  }
 
-   
-    const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-    window.location.href = mailtoLink;
-  };
+  const mailtoLink = `mailto:${email}`;
+  window.location.href = mailtoLink;
+};
 
   const toggleMode = () => {
     setIsCSVMode(!isCSVMode);
