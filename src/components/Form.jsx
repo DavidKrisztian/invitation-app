@@ -83,10 +83,7 @@ const Form = () => {
       return;
     }
 
-    const subject = encodeURIComponent(`Invitație Funktastika pentru ${formData.name}`);
-    const body = encodeURIComponent(
-      'Bună ziua,\n\nVă invităm să participați la evenimentul Funktastika. Mai jos găsiți invitația.\n\nCu stimă,\nFunktastika'
-    );
+   
     const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
     window.location.href = mailtoLink;
   };
